@@ -171,8 +171,12 @@ def ejecutar_actualizacion():
     archivo_consumo = None
     if dp_items:
         archivo_dp = generar_json("datos_personales", dp_items)
+    else:
+        print("No hay novedades para Datos Personales")
     if consumo_items:
         archivo_consumo = generar_json("consumo", consumo_items)
+    else:
+        print("No hay novedades para Consumo")
 
     token = os.getenv("GITHUB_TOKEN")
     if not token:
@@ -199,6 +203,11 @@ def ejecutar_actualizacion():
 
 # ========== ENDPOINTS DEL SERVICIO WEB ==========
 @app.route('/')
+def home():
+    """Raíz informativa: no ejecuta actualización automática"""
+    return "Agente activo. Usa /update para ejecutar actualización.", 200
+
+@app.route('/update')
 def trigger_update():
     """Endpoint que activa manualmente la actualización (usado por cron gratuito)"""
     ejecutar_actualizacion()
@@ -206,12 +215,10 @@ def trigger_update():
 
 @app.route('/health')
 def health():
+    """Endpoint para health check de Render (no ejecuta actualización)"""
     return "Agente activo", 200
 
-# ========== INICIO DEL SERVIDOR (NO BLOQUEA) ==========
+# ========== INICIO DEL SERVIDOR ==========
 if __name__ == "__main__":
-    # El servicio se mantiene siempre activo escuchando peticiones HTTP.
-    # La actualización se dispara cada vez que se accede a la raíz "/".
-    # Usaremos cron-job.org para llamar a esta URL cada 6 horas.
     port = int(os.environ.get("PORT", 8080))
     app.run(host="0.0.0.0", port=port)
