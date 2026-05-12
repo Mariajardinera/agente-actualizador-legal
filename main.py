@@ -1,4 +1,5 @@
 import os
+import os
 import json
 import time
 import shutil
@@ -48,7 +49,6 @@ def es_fuente_oficial(url):
 
 # ========== BUSCADORES ==========
 def buscar_sernac():
-    # Feed RSS del SERNAC (actualmente no funciona, se deja para futuro)
     return []
 
 def buscar_cmf_normativa():
@@ -140,7 +140,6 @@ def subir_a_github(repo_url, archivo_local, destino_en_repo, token, commit_msg):
         repo.index.commit(f"{commit_msg} - {datetime.now().strftime('%Y-%m-%d %H:%M')}")
         repo.remotes.origin.push()
         print(f"✅ Subido a {repo_url} -> {destino_en_repo}")
-        # Limpiar clon temporal para ahorrar espacio
         shutil.rmtree(repo_path)
         return True
     except Exception as e:
