@@ -1,8 +1,8 @@
 import os
-import os
 import json
 import time
 import shutil
+import threading
 import requests
 import git
 from bs4 import BeautifulSoup
@@ -203,18 +203,17 @@ def ejecutar_actualizacion():
 # ========== ENDPOINTS DEL SERVICIO WEB ==========
 @app.route('/')
 def home():
-    """Raíz informativa: no ejecuta actualización automática"""
     return "Agente activo. Usa /update para ejecutar actualización.", 200
 
 @app.route('/update')
 def trigger_update():
-    """Endpoint que activa manualmente la actualización (usado por cron gratuito)"""
-    ejecutar_actualizacion()
+    """Ejecuta la actualización en segundo plano para no bloquear la respuesta"""
+    hilo = threading.Thread(target=ejecutar_actualizacion)
+    hilo.start()
     return "OK", 200
 
 @app.route('/health')
 def health():
-    """Endpoint para health check de Render (no ejecuta actualización)"""
     return "Agente activo", 200
 
 # ========== INICIO DEL SERVIDOR ==========
